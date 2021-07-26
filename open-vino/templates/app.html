@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>Homepage</title>
+<title>RecipeRec</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -27,7 +27,7 @@
   .bgimg-1 {
     background-position: center;
     background-size: cover;
-    background-color: white;
+    background-color: #9ddeb9 ;
     min-height: 100%;
   }
 
@@ -54,6 +54,10 @@
     margin-right: 100rem;
   }
 
+  .color {
+    color: black !important;
+    background-color: #fed8b1 !important
+  }
   .w3-theme-l5 {
     color: #000 !important;
     background-color: #f0faf5 !important
@@ -150,15 +154,15 @@
 
   <!-- Navbar (sit on top) -->
   <div class="w3-top">
-    <div class="w3-bar w3-theme w3-card" id="myNavbar">
-      <a class="w3-bar-item w3-wide"><img src= "" width="65" height="50"alt="INSERT_LOGO"></a>
+    <div class="w3-bar w3-white w3-card" id="myNavbar">
+      <a href="#home" class="w3-bar-item w3-button w3-wide"><i class="fa fa-shopping-cart"></i> RecipeRec</a>
       <!-- Right-sided navbar links -->
       <div class="w3-right w3-hide-small">
-        <form action="/" method="POST">
-          <input type="file" onchange="form.submit()" id="real-file" hidden="hidden" />
-          <a class="w3-bar-item w3-button" id="custom-button"><i class="fa fa-cloud-upload fa-2x"></i></a>
-        </form>
+        <a href="#about" class="w3-bar-item w3-button"><i class="fa fa-info-circle"></i> ABOUT</a>
+        <a href="#pricing" class="w3-bar-item w3-button"><i class="fa fa-usd"></i> PRODUCTS</a>
+        <a href="#contact" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i> CONTACT</a>
       </div>
+      
       <!-- Hide right-floated links on small screens and replace them with a menu icon -->
       <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium"
         onclick="w3_open()">
@@ -167,68 +171,168 @@
     </div>
   </div>
 
-  <div class="w3-row-padding w3-margin-bottom" style="padding-top:106px">
-    <div class="w3-quarter">
-      <div class="w3-container w3-theme-d3 ">
-        <div class="w3-clear"></div>
-        <h4><i class="fa fa-link"></i> FILL_IN<span class="w3-right">0</span></h4>
-      </div>
-    </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-theme-d3 ">
-        <div class="w3-clear"></div>
-        <h4><i class="fa fa-calendar"></i> FILL_IN<span class="w3-right">0</span></h4>
-      </div>
-    </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-theme-d3 ">
-        <div class="w3-clear"></div>
-        <h4><i class="fa fa-cloud-upload"></i> FILL_IN<span class="w3-right">0</span></h4>
-      </div>
-    </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-theme-d3 ">
-        <div class="w3-clear"></div>
-        <h4><i class="fa fa-exclamation-circle"></i> FILL_IN<span class="w3-right">0</span></h4>
-      </div>
-    </div>
-  </div>
+  <header class="bgimg-1 w3-display-container w3-grayscale-min" id="home">
+    <div class="w3-container w3-center w3-theme-l3" style="padding:128px 16px" id="pricing">
+      <h3><b><i class="fa fa-dashboard"></i> RecipeRec Dashboard</b></h3>
+      <form action="/" method="POST">
+        <input type="file" onchange="form.submit()" id="real-file" hidden="hidden" />
+        <a class="w3-bar-item w3-button" id="custom-button"><i class="fa fa-upload fa-2x"></i></a>
+      </form>
+      <div class="w3-row-padding" style="margin-top:64px">
 
-  <div class="w3-section w3-bottombar w3-padding-16" style="padding-left:16px">
-    <span class="w3-margin-right">Filter:</span>
-    <div class="w3-dropdown-hover">
-      <button class="w3-button w3-white w3-hide-small"><i class="fa fa-microchip w3-margin-right"></i>FILL_IN</button>
-      <button class="w3-button w3-white w3-hide-small"><i class="fa fa-book w3-margin-right"></i>FILL_IN</button>
-      <button class="w3-button w3-white w3-hide-small"><i class="fa fa-cog w3-margin-right"></i>FILL_IN</button>
-      <button class="w3-button w3-white"><i class="fa fa-calendar w3-margin-right"></i>FILL_IN</button>
+        <div class="w3-half w3-section">
+          <ul class="w3-ul w3-white w3-hover-shadow">
+            <li class="w3-theme-d5 w3-xlarge w3-padding-48">Ingredients</li>
+            {% for ingredient in ingredients: %}
+            <li class="w3-padding-16">{{ ingredient }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="w3-half w3-section">
+          <ul class="w3-ul w3-white w3-hover-shadow">
+            <li class="w3-theme-d5 w3-xlarge w3-padding-48">Recipes</li>
+
+            {% for recipe in recipes: %}
+              {% for image in images: %}
+              <img src= {{ image }} width="200" height="250" style="padding-top:16px"  >
+              {% endfor %}
+            <li class="w3-padding-16">{{ recipe }}</li>
+            {% endfor %}
+
+          </ul>
+        </div>
+      </div>
+    </div>
+     
+    <div class="w3-display-bottomleft w3-text-grey w3-large" style="padding:24px 48px">
+      <i class="fa fa-facebook-official w3-hover-opacity"></i>
+      <i class="fa fa-instagram w3-hover-opacity"></i>
+      <i class="fa fa-snapchat w3-hover-opacity"></i>
+      <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+      <i class="fa fa-twitter w3-hover-opacity"></i>
+      <i class="fa fa-linkedin w3-hover-opacity"></i>
+    </div>
+  </header>
+
+  <!-- About Section -->
+<div class="w3-container" style="padding:128px 16px" id="about">
+  <h3 class="w3-center">ABOUT THE COMPANY</h3>
+  <p class="w3-center w3-large">Key features of our company</p>
+  <div class="w3-row-padding w3-center" style="margin-top:64px">
+    <div class="w3-quarter">
+      <i class="fa fa-desktop w3-margin-bottom w3-jumbo w3-center"></i>
+      <p class="w3-large">Responsive</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
+    </div>
+    <div class="w3-quarter">
+      <i class="fa fa-heart w3-margin-bottom w3-jumbo"></i>
+      <p class="w3-large">Passion</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
+    </div>
+    <div class="w3-quarter">
+      <i class="fa fa-diamond w3-margin-bottom w3-jumbo"></i>
+      <p class="w3-large">Design</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
+    </div>
+    <div class="w3-quarter">
+      <i class="fa fa-cog w3-margin-bottom w3-jumbo"></i>
+      <p class="w3-large">Support</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
     </div>
   </div>
+</div>
 
-  <div class="w3-container">
-    <h5><b><i class="fa fa-dashboard"></i> Analytics Dashboard</b></h5>
-    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-      <tr>
-        <td>FILL_IN</td>
-        <td>FILL_IN</td>
-      </tr>
-      <tr>
-        <td>FILL_IN</td>
-        <td>FILL_IN</td>
-      </tr>
-      <tr>
-        <td>FILL_IN</td>
-        <td>FILL_IN</td>
-      </tr>
-      <tr>
-        <td>FILL_IN</td>
-        <td>FILL_IN</td>
-      </tr>
-      <tr>
-        <td>FILL_IN</td>
-        <td>FILL_IN</td>
-      </tr>
-    </table><br>
+<!-- Pricing Section -->
+<div class="w3-container w3-center w3-theme-l4" style="padding:128px 16px" id="pricing">
+  <h3>PRICING</h3>
+  <p class="w3-large">Choose a pricing plan that fits your needs.</p>
+  <div class="w3-row-padding" style="margin-top:64px">
+    <div class="w3-third w3-section">
+      <ul class="w3-ul w3-white w3-hover-shadow">
+        <li class="w3-theme-l3 w3-xlarge w3-padding-32">Basic</li>
+        <li class="w3-padding-16"><b>10GB</b> Storage</li>
+        <li class="w3-padding-16"><b>10</b> Emails</li>
+        <li class="w3-padding-16"><b>10</b> Domains</li>
+        <li class="w3-padding-16"><b>Endless</b> Support</li>
+        <li class="w3-padding-16">
+          <h2 class="w3-wide">$ 10</h2>
+          <span class="w3-opacity">per month</span>
+        </li>
+        <li class="w3-light-grey w3-padding-24">
+          <button class="w3-button w3-black w3-padding-large">Sign Up</button>
+        </li>
+      </ul>
+    </div>
+    <div class="w3-third">
+      <ul class="w3-ul w3-white w3-hover-shadow">
+        <li class="w3-theme-d5 w3-xlarge w3-padding-48">Pro</li>
+        <li class="w3-padding-16"><b>25GB</b> Storage</li>
+        <li class="w3-padding-16"><b>25</b> Emails</li>
+        <li class="w3-padding-16"><b>25</b> Domains</li>
+        <li class="w3-padding-16"><b>Endless</b> Support</li>
+        <li class="w3-padding-16">
+          <h2 class="w3-wide">$ 25</h2>
+          <span class="w3-opacity">per month</span>
+        </li>
+        <li class="w3-light-grey w3-padding-24">
+          <button class="w3-button w3-black w3-padding-large">Sign Up</button>
+        </li>
+      </ul>
+    </div>
+    <div class="w3-third w3-section">
+      <ul class="w3-ul w3-white w3-hover-shadow">
+        <li class="w3-theme-l3 w3-xlarge w3-padding-32">Premium</li>
+        <li class="w3-padding-16"><b>50GB</b> Storage</li>
+        <li class="w3-padding-16"><b>50</b> Emails</li>
+        <li class="w3-padding-16"><b>50</b> Domains</li>
+        <li class="w3-padding-16"><b>Endless</b> Support</li>
+        <li class="w3-padding-16">
+          <h2 class="w3-wide">$ 50</h2>
+          <span class="w3-opacity">per month</span>
+        </li>
+        <li class="w3-light-grey w3-padding-24">
+          <button class="w3-button w3-black w3-padding-large">Sign Up</button>
+        </li>
+      </ul>
+    </div>
   </div>
+</div>
+
+<!-- Contact Section -->
+<div class="w3-container w3-light-grey" style="padding:128px 16px" id="contact">
+  <h3 class="w3-center">CONTACT</h3>
+  <p class="w3-center w3-large">Lets get in touch. Send us a message:</p>
+  <div style="margin-top:48px">
+    <p><i class="fa fa-map-marker fa-fw w3-xxlarge w3-margin-right"></i> USA</p>
+    <p><i class="fa fa-envelope fa-fw w3-xxlarge w3-margin-right"> </i> Email: team@reciperec.com</p>
+    <br>
+    <form action="/action_page.php" target="_blank">
+      <p><input class="w3-input w3-border" type="text" placeholder="Name" required name="Name"></p>
+      <p><input class="w3-input w3-border" type="text" placeholder="Email" required name="Email"></p>
+      <p><input class="w3-input w3-border" type="text" placeholder="Subject" required name="Subject"></p>
+      <p><input class="w3-input w3-border" type="text" placeholder="Message" required name="Message"></p>
+      <p>
+        <button class="w3-button w3-black" type="submit">
+          <i class="fa fa-paper-plane"></i> SEND MESSAGE
+        </button>
+      </p>
+    </form>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding-64">
+  <a href="#home" class="w3-button w3-light-grey"><i class="fa fa-arrow-up w3-margin-right"></i>To the top</a>
+  <div class="w3-xlarge w3-section">
+    <i class="fa fa-facebook-official w3-hover-opacity"></i>
+    <i class="fa fa-instagram w3-hover-opacity"></i>
+    <i class="fa fa-snapchat w3-hover-opacity"></i>
+    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+    <i class="fa fa-twitter w3-hover-opacity"></i>
+    <i class="fa fa-linkedin w3-hover-opacity"></i>
+  </div>
+  <p>Powered by <a title="RecipeRec" target="_blank" class="w3-hover-text-green">RecipeRec</a></p>
+</footer>
 
   <script type="text/javascript">
     const realFileBtn = document.getElementById("real-file");
@@ -237,6 +341,33 @@
     customBtn.addEventListener("click", function () {
       realFileBtn.click();
     });
+  </script>
+
+<script>
+  // Modal Image Gallery
+  function onClick(element) {
+    document.getElementById("img01").src = element.src;
+    document.getElementById("modal01").style.display = "block";
+    var captionText = document.getElementById("caption");
+    captionText.innerHTML = element.alt;
+  }
+  
+  
+  // Toggle between showing and hiding the sidebar when clicking the menu icon
+  var mySidebar = document.getElementById("mySidebar");
+  
+  function w3_open() {
+    if (mySidebar.style.display === 'block') {
+      mySidebar.style.display = 'none';
+    } else {
+      mySidebar.style.display = 'block';
+    }
+  }
+  
+  // Close the sidebar with the close button
+  function w3_close() {
+      mySidebar.style.display = "none";
+  }
   </script>
 
 </body>
