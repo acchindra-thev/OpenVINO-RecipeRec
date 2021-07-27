@@ -195,6 +195,12 @@
               {% for i in range(recipes|length): %}
                 {% if missed_ingredient_numbers[i] == 0 %}
                   <img src= {{ images[i] }} width="200" height="250" style="padding-top:16px">
+                  <li class="w3-padding-16"> {{ recipes[i] }} </li>
+                {% endif %}
+              {% endfor %}
+              {% for i in range(recipes|length): %}
+                {% if missed_ingredient_numbers[i] != 0 %}
+                  <img src= {{ images[i] }} width="200" height="250" style="padding-top:16px">
                   <li class="w3-padding-16">{{ recipes[i] }} | Missing # of Ingredients: {{missed_ingredient_numbers[i]}} </li>
                 {% endif %}
               {% endfor %}
