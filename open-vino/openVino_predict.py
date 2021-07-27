@@ -14,7 +14,7 @@ def infer():
 
     cpu_extension = None
     device = 'CPU'
-    input_files = [f for f in os.listdir('uploads') if os.path.isfile(os.path.join('uploads', f))]
+    input_files = ['uploads/' + f for f in os.listdir('uploads') if os.path.isfile(os.path.join('uploads', f))]
     number_top = 1
     labels = 'labels.txt'
     predicted_ingredients = []
