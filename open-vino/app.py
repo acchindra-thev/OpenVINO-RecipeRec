@@ -11,6 +11,12 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 @app.route('/', methods=['POST', 'GET'])
 def main():
+
+    # recipes[i] corresponds to images[i] corresponds to missed_ing_nums_[i] ... etc.
+    recipes = []
+    images = []
+    missed_ingredient_numbers = []
+
     if request.method == 'POST':
         num_recipes_to_show = 5
         ignore_pantry = True
@@ -18,11 +24,6 @@ def main():
         ingredients = run_openvino()
 
         recipe_json = CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority)
-
-        # recipes[i] corresponds to images[i] corresponds to missed_ing_nums_[i] ... etc.
-        recipes = []
-        images = []
-        missed_ingredient_numbers = []
 
         for recipe in recipe_json:
             recipes.append(recipe['title'])
@@ -33,20 +34,18 @@ def main():
         #     "https://static.wixstatic.com/media/6db271_e796096026b24636b83f5d861d3fd723~mv2.jpg/v1/crop/x_5,y_0,w_669,h_1020/fill/w_272,h_416,al_c,q_80,usm_0.66_1.00_0.01/Chicken-Pesto-Prep-3_5-3-1.webp",
         #     "https://static.wixstatic.com/media/6db271_d9a9b3990b474be5b7038b8070e5abbf~mv2.jpg/v1/crop/x_10,y_0,w_1181,h_1800/fill/w_272,h_416,al_c,q_80,usm_0.66_1.00_0.01/pesto-pasta-recipe-5.webp"
         # ]
-        return render_template('app.html', ingredients=ingredients, recipes=recipes, images=images)
+        return render_template('app.html', ingredients=ingredients, recipes=recipes, images=images, missed_ingredient_numbers = missed_ingredient_numbers)
 
     return render_template('app.html', ingredients=["Upload ingredients to get recommendations!"],
-                           recipes=["Upload ingredients to get recommendations!"], images=[])
+                           recipes=["Upload ingredients to get recommendations!"], images=images, missed_ingredient_numbers = missed_ingredient_numbers)
 
 
 """
 Send a GET request to Spoonacular API, and return recipes that use the specified ingredients
-
 @:param ingredients, a list of ingredients outputted by the image classification model
 @:param num_recipes_to_show, user-specified number of recipes to return
 @:param ignore_pantry, bool value whether to ignore pantry ingredients (salt, water, etc) or not
 @:param sorting_priority, whether to maximize used ingredients (1) or minimize missing ingredients (2) first
-
 @:return recipe_json, a json formatted list of recipes and associated metadata
 """
 def CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority):
