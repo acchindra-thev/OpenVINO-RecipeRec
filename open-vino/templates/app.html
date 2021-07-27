@@ -155,14 +155,14 @@
   <!-- Navbar (sit on top) -->
   <div class="w3-top">
     <div class="w3-bar w3-white w3-card" id="myNavbar">
-      <a href="#home" class="w3-bar-item w3-button w3-wide"><i class="fa fa-shopping-cart"></i> RecipeRec</a>
+      <a href="#home" class="w3-bar-item w3-button w3-wide"><i class=""></i> RecipeRec</a>
       <!-- Right-sided navbar links -->
       <div class="w3-right w3-hide-small">
         <a href="#about" class="w3-bar-item w3-button"><i class="fa fa-info-circle"></i> ABOUT</a>
-        <a href="#pricing" class="w3-bar-item w3-button"><i class="fa fa-usd"></i> PRODUCTS</a>
+        <a href="#pricing" class="w3-bar-item w3-button"><i class="fa fa-usd"></i> PRODUCT</a>
         <a href="#contact" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i> CONTACT</a>
       </div>
-      
+
       <!-- Hide right-floated links on small screens and replace them with a menu icon -->
       <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium"
         onclick="w3_open()">
@@ -174,8 +174,8 @@
   <header class="bgimg-1 w3-display-container w3-grayscale-min" id="home">
     <div class="w3-container w3-center w3-theme-l3" style="padding:128px 16px" id="pricing">
       <h3><b><i class="fa fa-dashboard"></i> RecipeRec Dashboard</b></h3>
-      <form action="/" method="POST">
-        <input type="file" onchange="form.submit()" id="real-file" hidden="hidden" />
+      <form action="/" method="POST" enctype="multipart/form-data">
+        <input type="file" name = file onchange="form.submit()" id="real-file" hidden="hidden" />
         <a class="w3-bar-item w3-button" id="custom-button"><i class="fa fa-upload fa-2x"></i>  DEMO UPLOAD</a>
       </form>
       <div class="w3-row-padding" style="margin-top:64px">
@@ -211,7 +211,7 @@
         </div>
       </div>
     </div>
-     
+
     <div class="w3-display-bottomleft w3-text-grey w3-large" style="padding:24px 48px">
       <i class="fa fa-facebook-official w3-hover-opacity"></i>
       <i class="fa fa-instagram w3-hover-opacity"></i>
@@ -304,7 +304,7 @@
       <p><input class="w3-input w3-border" type="text" placeholder="Subject" required name="Subject"></p>
       <p><input class="w3-input w3-border" type="text" placeholder="Message" required name="Message"></p>
       <p>
-        <button class="w3-button w3-black" type="submit">
+        <button class="w3-button w3-black" type="submit" disabled>
           <i class="fa fa-paper-plane"></i> SEND MESSAGE
         </button>
       </p>
@@ -343,11 +343,11 @@
     var captionText = document.getElementById("caption");
     captionText.innerHTML = element.alt;
   }
-  
-  
+
+
   // Toggle between showing and hiding the sidebar when clicking the menu icon
   var mySidebar = document.getElementById("mySidebar");
-  
+
   function w3_open() {
     if (mySidebar.style.display === 'block') {
       mySidebar.style.display = 'none';
@@ -355,7 +355,7 @@
       mySidebar.style.display = 'block';
     }
   }
-  
+
   // Close the sidebar with the close button
   function w3_close() {
       mySidebar.style.display = "none";
