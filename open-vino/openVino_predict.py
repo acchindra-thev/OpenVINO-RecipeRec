@@ -1,7 +1,6 @@
 import os
 import sys
 
-
 import numpy as np
 import logging as log
 from openvino.inference_engine import IECore
@@ -15,7 +14,7 @@ def infer():
 
     cpu_extension = None
     device = 'CPU'
-    input_files = os.listdir('uploads')
+    input_files = [f for f in os.listdir('uploads') if os.path.isfile(os.path.join('uploads', f))]
     number_top = 1
     labels = 'labels.txt'
     predicted_ingredients = []

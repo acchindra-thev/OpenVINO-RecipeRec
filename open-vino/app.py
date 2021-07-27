@@ -28,6 +28,7 @@ def main():
     recipes = []
     images = []
     missed_ingredient_numbers = []
+    missed_ingredient_names = {}
 
     if request.method == 'POST':
 
@@ -48,6 +49,8 @@ def main():
         recipe_json = CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority)
 
         for recipe in recipe_json:
+            for ingredient in recipe_json['missedIngredients']:
+                missed_ingredient_names[recipe] = ingredient['name']
             recipes.append(recipe['title'])
             images.append(recipe['image'])
             missed_ingredient_numbers.append(recipe['missedIngredientCount'])
