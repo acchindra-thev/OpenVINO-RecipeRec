@@ -19,12 +19,15 @@ def main():
 
         recipe_json = CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority)
 
+        # recipes[i] corresponds to images[i] corresponds to missed_ing_nums_[i] ... etc.
         recipes = []
         images = []
+        missed_ingredient_numbers = []
 
         for recipe in recipe_json:
             recipes.append(recipe['title'])
             images.append(recipe['image'])
+            missed_ingredient_numbers.append(recipe['missedIngredientCount'])
 
         # images = [
         #     "https://static.wixstatic.com/media/6db271_e796096026b24636b83f5d861d3fd723~mv2.jpg/v1/crop/x_5,y_0,w_669,h_1020/fill/w_272,h_416,al_c,q_80,usm_0.66_1.00_0.01/Chicken-Pesto-Prep-3_5-3-1.webp",
