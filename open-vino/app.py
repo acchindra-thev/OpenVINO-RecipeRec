@@ -1,27 +1,49 @@
+import os
+
 from flask import Flask, render_template, request
 import urllib3
 import requests
 import json
-from openVino_predict import run_openvino
+
+from werkzeug.utils import secure_filename
+
+import openvino_predict
 
 app = Flask(__name__)
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+#Variables for the upload
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['POST', 'GET'])
 def main():
-
     # recipes[i] corresponds to images[i] corresponds to missed_ing_nums_[i] ... etc.
+    ingredients = []
     recipes = []
     images = []
     missed_ingredient_numbers = []
 
     if request.method == 'POST':
+
+        #Download the files that are uploaded in the frontend
+        file = request.files['file']
+        if file.filename == '':
+            print('No file selected for inferring')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            print('Image successfully uploaded and displayed below')
+
         num_recipes_to_show = 5
         ignore_pantry = True
         sorting_priority = 1
-        ingredients = run_openvino()
+        ingredients = ingredients+openvino_predict.infer()
 
         recipe_json = CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority)
 
@@ -30,10 +52,6 @@ def main():
             images.append(recipe['image'])
             missed_ingredient_numbers.append(recipe['missedIngredientCount'])
 
-        # images = [
-        #     "https://static.wixstatic.com/media/6db271_e796096026b24636b83f5d861d3fd723~mv2.jpg/v1/crop/x_5,y_0,w_669,h_1020/fill/w_272,h_416,al_c,q_80,usm_0.66_1.00_0.01/Chicken-Pesto-Prep-3_5-3-1.webp",
-        #     "https://static.wixstatic.com/media/6db271_d9a9b3990b474be5b7038b8070e5abbf~mv2.jpg/v1/crop/x_10,y_0,w_1181,h_1800/fill/w_272,h_416,al_c,q_80,usm_0.66_1.00_0.01/pesto-pasta-recipe-5.webp"
-        # ]
         return render_template('app.html', ingredients=ingredients, recipes=recipes, images=images, missed_ingredient_numbers = missed_ingredient_numbers)
 
     return render_template('app.html', ingredients=["Upload ingredients to get recommendations!"],
