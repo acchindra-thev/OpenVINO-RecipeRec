@@ -7,7 +7,7 @@ import json
 
 from werkzeug.utils import secure_filename
 
-import openvino_predict
+import openVino_predict
 
 app = Flask(__name__)
 
@@ -43,7 +43,7 @@ def main():
         num_recipes_to_show = 5
         ignore_pantry = True
         sorting_priority = 1
-        ingredients = ingredients+openvino_predict.infer()
+        ingredients = ingredients+openVino_predict.infer()
 
         recipe_json = CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority)
 
