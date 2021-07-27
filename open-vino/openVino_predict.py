@@ -1,18 +1,21 @@
+import os
 import sys
+
+
 import numpy as np
 import logging as log
 from openvino.inference_engine import IECore
 from predict_helper import process_image
 from datetime import datetime
 
-def run_openvino():
+def infer():
     start=datetime.now()
 
     log.basicConfig(format="[ %(levelname)s ] %(message)s", level=log.INFO, stream=sys.stdout)
 
     cpu_extension = None
     device = 'CPU'
-    input_files = ['image2.jpg','image3.jpg']
+    input_files = os.listdir('uploads')
     number_top = 1
     labels = 'labels.txt'
     predicted_ingredients = []
