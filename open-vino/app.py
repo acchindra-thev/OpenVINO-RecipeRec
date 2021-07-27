@@ -43,6 +43,8 @@ Send a GET request to Spoonacular API, and return recipes that use the specified
 @:param num_recipes_to_show, user-specified number of recipes to return
 @:param ignore_pantry, bool value whether to ignore pantry ingredients (salt, water, etc) or not
 @:param sorting_priority, whether to maximize used ingredients (1) or minimize missing ingredients (2) first
+
+@:return recipe_json, a json formatted list of recipes and associated metadata
 """
 def CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority):
     url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients"
