@@ -30,6 +30,7 @@ def main():
     missed_ingredient_numbers = []
     # keys = recipe names, values = missed ingdts per recipe
     missed_ingredient_names = {}
+    missed_ingredient_aisles = {}
 
     if request.method == 'POST':
 
@@ -42,7 +43,7 @@ def main():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print('Image successfully uploaded and displayed below')
 
-        num_recipes_to_show = 25
+        num_recipes_to_show = 5
         ignore_pantry = True
         sorting_priority = 1
         ingredients = ingredients+openVino_predict.infer()
@@ -54,8 +55,11 @@ def main():
 
                 if recipe_json[i]['title'] not in missed_ingredient_names:
                     missed_ingredient_names[recipe_json[i]['title']] = []
+                if recipe_json[i]['title'] not in missed_ingredient_aisles:
+                    missed_ingredient_aisles[recipe_json[i]['title']] = []
 
                 missed_ingredient_names[recipe_json[i]['title']].append(ingredient['name'])
+                missed_ingredient_aisles[recipe_json[i]['title']].append(ingredient['aisle'])
 
             recipes.append(recipe_json[i]['title'])
             images.append(recipe_json[i]['image'])
