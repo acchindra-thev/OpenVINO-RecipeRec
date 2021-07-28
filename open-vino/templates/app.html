@@ -208,8 +208,14 @@
             {% if images %}
             {% for i in range(recipes|length): %}
             {% if missed_ingredient_numbers[i] == 0 %}
-            <img src={{ images[i] }} width="200" height="234" style="border: 5px solid black;">
-            <li class="w3-padding-16"> {{ recipes[i] }} </li>
+            <div class="w3-half w3-section">
+              <li style="font-size:20px" class="w3-padding-16 w3-center"><u>Missing Ingredients</u></li>
+              <li class="w3-padding-16 w3-center">None</li>
+            </div>
+            <div class="w3-half w3-section">
+              <img src={{ images[i] }} width="200" height="234" style="border: 5px solid black;">
+              <li style="font-size:20px" class="w3-padding-16 w3-center"><b>{{ recipes[i].split("(")[0] }}</b></li>
+            </div>
             {% endif %}
             {% endfor %}
             {% for i in range(recipes|length): %}
