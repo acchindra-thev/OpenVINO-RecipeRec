@@ -42,7 +42,7 @@ def main():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print('Image successfully uploaded and displayed below')
 
-        num_recipes_to_show = 5
+        num_recipes_to_show = 25
         ignore_pantry = True
         sorting_priority = 1
         ingredients = ingredients+openVino_predict.infer()
@@ -61,10 +61,12 @@ def main():
             images.append(recipe_json[i]['image'])
             missed_ingredient_numbers.append(recipe_json[i]['missedIngredientCount'])
 
-        return render_template('app.html', ingredients=ingredients, recipes=recipes, images=images, missed_ingredient_numbers = missed_ingredient_numbers)
+        return render_template('app.html', ingredients=ingredients, recipes=recipes, images=images, 
+        missed_ingredient_numbers = missed_ingredient_numbers, missed_ingredient_names=missed_ingredient_names)
 
     return render_template('app.html', ingredients=["Upload ingredients to get recommendations!"],
-                           recipes=["Upload ingredients to get recommendations!"], images=images, missed_ingredient_numbers = missed_ingredient_numbers)
+    recipes=["Upload ingredients to get recommendations!"], images=images, 
+    missed_ingredient_numbers = missed_ingredient_numbers, missed_ingredient_names=missed_ingredient_names)
 
 
 """
