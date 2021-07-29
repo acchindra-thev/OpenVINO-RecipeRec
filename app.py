@@ -15,6 +15,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 #Variables for the
 UPLOAD_FOLDER = 'uploads'
 
+ingredients = set()
+
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -27,7 +29,6 @@ def allowed_file(filename):
 @app.route('/', methods=['POST', 'GET'])
 def main():
     # recipes[i] corresponds to images[i] corresponds to missed_ing_nums_[i] ... etc.
-    ingredients = set()
     recipes = []
     images = []
     missed_ingredient_numbers = []
