@@ -12,25 +12,22 @@ app = Flask(__name__)
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Variables for the
+#Variables for the
 UPLOAD_FOLDER = 'uploads'
-
-ingredients = set()
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mov'}
-
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4'])
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
 @app.route('/', methods=['POST', 'GET'])
 def main():
     # recipes[i] corresponds to images[i] corresponds to missed_ing_nums_[i] ... etc.
+    ingredients = set()
     recipes = []
     images = []
     missed_ingredient_numbers = []
@@ -38,9 +35,11 @@ def main():
     missed_ingredient_names = {}
     missed_ingredient_aisles = {}
 
+
+
     if request.method == 'POST':
 
-        # Download the files that are uploaded in the frontend
+        #Download the files that are uploaded in the frontend
         file = request.files['file']
         if file.filename == '':
             print('No file selected for inferring')
@@ -49,14 +48,14 @@ def main():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print('Image successfully uploaded and displayed below')
 
-        num_recipes_to_show = 20
+        num_recipes_to_show = 5
         ignore_pantry = True
         sorting_priority = 1
-        ingredients.update(openvino_infer.infer())
+        ingredients.update(set([item.replace('_', ' ') for item in openvino_infer.infer()]))
 
-        directory = 'Uploads'
-        for f in os.listdir(directory):
-            os.remove(os.path.join(directory, f))
+        dir = 'Uploads'
+        for f in os.listdir(dir):
+            os.remove(os.path.join(dir, f))
 
         recipe_json = CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority)
 
@@ -73,13 +72,11 @@ def main():
             missed_ingredient_numbers.append(recipe_json[i]['missedIngredientCount'])
 
         return render_template('app.html', ingredients=list(ingredients), recipes=recipes, images=images,
-                               missed_ingredient_numbers=missed_ingredient_numbers,
-                               missed_ingredient_names=missed_ingredient_names)
+        missed_ingredient_numbers = missed_ingredient_numbers, missed_ingredient_names=missed_ingredient_names)
 
     return render_template('app.html', ingredients=["Upload ingredients to get recommendations!"],
-                           recipes=["Upload ingredients to get recommendations!"], images=images,
-                           missed_ingredient_numbers=missed_ingredient_numbers,
-                           missed_ingredient_names=missed_ingredient_names)
+    recipes=["Upload ingredients to get recommendations!"], images=images, 
+    missed_ingredient_numbers = missed_ingredient_numbers, missed_ingredient_names=missed_ingredient_names)
 
 
 """
@@ -90,8 +87,6 @@ Send a GET request to Spoonacular API, and return recipes that use the specified
 @:param sorting_priority, whether to maximize used ingredients (1) or minimize missing ingredients (2) first
 @:return recipe_json, a json formatted list of recipes and associated metadata
 """
-
-
 def CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority):
     url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients"
 
@@ -108,10 +103,9 @@ def CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority):
 
     response = requests.request("GET", url, headers=headers, params=querystring)
 
-    # print(response.text)
+    #print(response.text)
     recipe_json = json.loads(response.text)
     return recipe_json
-
 
 if __name__ == "__main__":
     app.run(debug=True)
