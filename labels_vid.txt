@@ -38,7 +38,7 @@ passion-fruit
 pasta
 peach
 pear
-pepper
+Pepper
 pineapple
 plum
 pomegranate
@@ -52,7 +52,7 @@ spices
 sugar
 tea
 tomato
-tomato_sauce
+Tomato_Sauce
 vinegar
 water
 yogurt

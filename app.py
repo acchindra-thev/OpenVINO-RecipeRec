@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-#Variables for the
+# Variables for the
 UPLOAD_FOLDER = 'uploads'
 
 ingredients = set()
@@ -23,24 +23,26 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4'])
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route('/', methods=['POST', 'GET'])
 def main():
     # recipes[i] corresponds to images[i] corresponds to missed_ing_nums_[i] ... etc.
     recipes = []
     images = []
+    ingredient_images = ["https://intel-my.sharepoint.com/:i:/r/personal/acchindra_thev_intel_com/Documents/Pictures/Screenshots/Pepper.PNG?csf=1&web=1&e=xwd29i",
+              "https://intel-my.sharepoint.com/:i:/r/personal/acchindra_thev_intel_com/Documents/Pictures/Screenshots/Tomato_Sauce.PNG?csf=1&web=1&e=nPJ30F"]
     missed_ingredient_numbers = []
     # keys = recipe names, values = missed ingdts per recipe
     missed_ingredient_names = {}
     missed_ingredient_aisles = {}
 
-
-
     if request.method == 'POST':
 
-        #Download the files that are uploaded in the frontend
+        # Download the files that are uploaded in the frontend
         file = request.files['file']
         if file.filename == '':
             print('No file selected for inferring')
@@ -73,11 +75,13 @@ def main():
             missed_ingredient_numbers.append(recipe_json[i]['missedIngredientCount'])
 
         return render_template('app.html', ingredients=list(ingredients), recipes=recipes, images=images,
-        missed_ingredient_numbers = missed_ingredient_numbers, missed_ingredient_names=missed_ingredient_names)
+                               missed_ingredient_numbers=missed_ingredient_numbers,
+                               missed_ingredient_names=missed_ingredient_names,
+                               missed_ingredient_aisles=missed_ingredient_aisles,
+                               ingredient_images=ingredient_images)
 
     return render_template('app.html', ingredients=["Upload ingredients to get recommendations!"],
-    recipes=["Upload ingredients to get recommendations!"], images=images, 
-    missed_ingredient_numbers = missed_ingredient_numbers, missed_ingredient_names=missed_ingredient_names)
+                           recipes=["Upload ingredients to get recommendations!"])
 
 
 """
@@ -88,6 +92,8 @@ Send a GET request to Spoonacular API, and return recipes that use the specified
 @:param sorting_priority, whether to maximize used ingredients (1) or minimize missing ingredients (2) first
 @:return recipe_json, a json formatted list of recipes and associated metadata
 """
+
+
 def CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority):
     url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients"
 
@@ -104,9 +110,10 @@ def CallAPI(ingredients, num_recipes_to_show, ignore_pantry, sorting_priority):
 
     response = requests.request("GET", url, headers=headers, params=querystring)
 
-    #print(response.text)
+    # print(response.text)
     recipe_json = json.loads(response.text)
     return recipe_json
+
 
 if __name__ == "__main__":
     app.run(debug=True)

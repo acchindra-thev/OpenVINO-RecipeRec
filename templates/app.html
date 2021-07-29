@@ -40,25 +40,6 @@
     background-color: rgba(255, 255, 255, 0) !important
   }
 
-  .brlarge {
-    display: block;
-    margin-bottom: 2em;
-  }
-
-  .img {
-    border: black;
-    border-width: 10px;
-  }
-
-  .alert {
-    background: gray;
-    padding: 20rem;
-    border-radius: 5px;
-    color: white;
-    margin-left: 55rem;
-    margin-right: 100rem;
-  }
-
   .color {
     color: black !important;
     background-color: #fed8b1 !important
@@ -157,8 +138,21 @@
 
   div.ex3 {
     background-color: white;
-    max-height: 700px;
+    max-height: 800px;
     overflow: auto;
+  }
+
+  .button4 {
+      border-radius: 12px;
+      background-color: red;
+      border: none;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      margin: 8px 8px;
+      font-size: 14px;
+      cursor: pointer;
   }
 
 </style>
@@ -168,7 +162,7 @@
   <!-- Navbar (sit on top) -->
   <div class="w3-top">
     <div class="w3-bar w3-white w3-card" id="myNavbar">
-      <a class="w3-bar-item w3-wide"><img
+      <a href="#home" class="w3-bar-item"><img
           src="https://intel-my.sharepoint.com/personal/damijah_carter_intel_com/Documents/Microsoft%20Teams%20Chat%20Files/Green%20Logo.png"
           width="110" height="50" alt="RecipeRec"></a>
       <!-- Right-sided navbar links -->
@@ -186,7 +180,7 @@
   </div>
 
   <header class="bgimg-1 w3-display-container w3-grayscale-min" id="home">
-    <div class="w3-container w3-center w3-theme-l3" style="padding:128px 16px" id="pricing">
+    <div class="w3-container w3-center w3-theme-l3" style="padding:128px 16px">
       <h3><b><i class="fa fa-dashboard"></i> RecipeRec Dashboard</b></h3>
       <form action="/" method="POST" enctype="multipart/form-data">
         <input type="file" name=file onchange="form.submit()" id="real-file" hidden="hidden" />
@@ -194,28 +188,39 @@
       </form>
       <div class="w3-row-padding" style="margin-top:64px">
 
-        <div class="w3-half w3-section ex3">
+        <div class="w3-half w3-section">
           <ul class="w3-ul w3-white w3-hover-shadow">
             <li class="w3-theme-d5 w3-xlarge w3-padding-48">Ingredients</li>
-            {% for ingredient in ingredients: %}
-            <li class="w3-padding-16">{{ ingredient }}</li>
-            {% endfor %}
+            {% if ingredient_images %}
+              <div class="w3-section">
+                  {% for k in range(ingredients|length) %}
+                     <img src={{ ingredient_images[k] }} width="200" height="234" style="border: 5px solid black;">
+                      <li class="w3-padding-16">{{ ingredients[k] }}</li>
+                  {% endfor %}
+              </div>
+            {% else %}
+                {% for ingredient in ingredients %}
+                <li class="w3-padding-16">{{ ingredient }}</li>
+                {% endfor %}
+            {% endif %}
+
           </ul>
         </div>
         <div class="w3-half w3-section ex3" >
           <ul class="w3-ul w3-white w3-hover-shadow">
             <li class="w3-theme-d5 w3-xlarge w3-padding-48">Recipes</li>
             {% if images %}
-            {% for i in range(recipes|length): %}
+            {% for i in range(recipes|length) %}
             {% if missed_ingredient_numbers[i] == 0 %}
             <img src={{ images[i] }} width="200" height="234" style="border: 5px solid black;">
             <li style="font-size:20px" class="w3-padding-16 w3-center"><b>{{ recipes[i].split("(")[0] }}</b></li>
             {% elif missed_ingredient_numbers[i] != 0 %}
             <div class="w3-half w3-section">
               <li style="font-size:20px" class="w3-padding-16 w3-center"><u>Missing Ingredients</u></li>
-              {% for ingredient in missed_ingredient_names.get(recipes[i]): %}
-              <li class="w3-padding-16 w3-center">{{ingredient}}</li>
-              {%endfor%}
+                {% for j in range(missed_ingredient_names.get(recipes[i])|length) %}
+                    <li class="w3-padding-16 w3-center"><b>{{ missed_ingredient_names.get(recipes[i])[j].capitalize() }}</b><br>Aisle | {{ missed_ingredient_aisles.get(recipes[i])[j] }}</li>
+                {% endfor %}
+            <a href="https://www.foodnetwork.com/recipes/giada-de-laurentiis/roasted-red-pepper-hummus-in-cucumber-cups-recipe-2047819" class="w3-button button4"><i class="fa fa-info-circle"></i> Food Network</a>
             </div>
             <div class="w3-half w3-section">
               <img src={{ images[i] }} width="200" height="234" style="border: 5px solid black;">
