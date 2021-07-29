@@ -16,14 +16,21 @@ def infer():
     device = 'CPU'
     input_files = ['uploads/' + f for f in os.listdir('Uploads') if os.path.isfile(os.path.join('Uploads', f))]
     number_top = 1
-    labels = 'labels.txt'
+    labels_img = 'labels_img.txt'
+    labels_vid = 'labels_vid.txt'
     predicted_ingredients = set()
 
-    if labels:
-        with open(labels, 'r') as f:
-            labels_map = [x.split(sep=' ', maxsplit=1)[-1].strip() for x in f]
+    if labels_img:
+        with open(labels_img, 'r') as f:
+            labels_map_img = [x.split(sep=' ', maxsplit=1)[-1].strip() for x in f]
     else:
-        labels_map = [None]
+        labels_map_img = [None]
+
+    if labels_vid:
+        with open(labels_vid, 'r') as f:
+            labels_map_vid = [x.split(sep=' ', maxsplit=1)[-1].strip() for x in f]
+    else:
+        labels_map_vid = [None]
 
     # Plugin initialization for specified device and load extensions library if specified
     log.info("Creating Inference Engine")
@@ -32,16 +39,19 @@ def infer():
         ie.add_extension(cpu_extension, "CPU")
 
     # Read a model in OpenVINO Intermediate Representation (.xml and .bin files) or ONNX (.onnx file) format
-    model = "models/openvino/MobileNetV2/mobilenetv2.xml"
-    weights = "models/openvino/MobileNetV2/mobilenetv2.bin"
+    model_img = "models/openvino/MobileNetV2/mobilenetv2.xml"
+    weights_img = "models/openvino/MobileNetV2/mobilenetv2.bin"
+    model_vid = "./models/OpenVINO/MobileNetV2_59/mobilenetv2_59.xml"
+    weights_vid = "./models/OpenVINO/MobileNetV2_59/mobilenetv2_59.bin"
     tflite_model = "models/TFLITE/lite-model_object_detection_mobile_object_localizer_v1_1_metadata_2.tflite"
-    log.info(f"Loading network:\n\t{model}")
 
-    net = ie.read_network(model=model, weights=weights)
-
-    assert len(net.input_info.keys()) == 1, "Sample supports only single input topologies"
-    assert len(net.outputs) == 1, "Sample supports only single output topologies"
-
+    # Loading model to the plugin
+    log.info("Loading model to the plugin")
+    net_img = ie.read_network(model=model_img, weights=weights_img)
+    net_vid = ie.read_network(model=model_vid, weights=weights_vid)
+    net_img_exec = ie.load_network(network=net_img, device_name=device)
+    net_vid_exec = ie.load_network(network=net_vid, device_name=device)
+    
     # Initialize TFLITE interpreter
     interpreter = tf.lite.Interpreter(model_path = tflite_model)
     interpreter.allocate_tensors()
@@ -50,15 +60,16 @@ def infer():
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
 
-    log.info("Preparing input blobs")
-    input_blob = next(iter(net.input_info))
-    out_blob = next(iter(net.outputs))
-    net.batch_size = 1
-
-    # Loading model to the plugin
-    log.info("Loading model to the plugin")
-    exec_net = ie.load_network(network=net, device_name=device)
-
+    log.info("Preparing input blobs image")
+    input_blob_img = next(iter(net_img.input_info))
+    out_blob_img = next(iter(net_img.outputs))
+    net_img.batch_size = 1
+    
+    log.info("Preparing input blobs video")
+    input_blob_vid = next(iter(net_vid.input_info))
+    out_blob_vid = next(iter(net_vid.outputs))
+    net_vid.batch_size = 1
+    
     # Open Video Capture
     cap = cv2.VideoCapture(input_files[0])
     if cap.isOpened() == False:
@@ -72,11 +83,11 @@ def infer():
             frame = cv2.resize(frame, (224, 224), interpolation = cv2.INTER_AREA)
             frame = np.transpose(frame, [2,0,1]) / 255
             frame = np.reshape(frame, (1, 3, 224, 224))
-            res = exec_net.infer(inputs={input_blob: frame})
+            res = net_img_exec.infer(inputs={input_blob_img: frame})
 
             # Processing output blob
             log.info("Processing output blob")
-            res = res[out_blob]
+            res = res[out_blob_img]
 
             log.info("results: ")
             for i, probs in enumerate(res):
@@ -84,7 +95,7 @@ def infer():
                 top_ind = np.argsort(probs)[-number_top:][::-1]
 
                 for id in top_ind:
-                    det_label = labels_map[id] if labels_map else "{}".format(id)
+                    det_label = labels_map_img[id] if labels_map_img else "{}".format(id)
                     predicted_ingredients.add(det_label)
                     print(det_label)
     else:
@@ -109,29 +120,28 @@ def infer():
                 for i, score in enumerate(out_dict['detection_scores']):
                     if score > .5:
                         ymin, xmin, ymax, xmax = (out_dict['detection_boxes'][i]*1080).astype(int)
-                        # print((ymin, xmin, ymax, xmax))
                         roi = cropped[ymin:ymax, xmin:xmax]
                         if roi.shape[0] < 80 or roi.shape[1] < 80:
                             continue
                         roi = cv2.resize(roi, (224, 224), interpolation = cv2.INTER_AREA)
                         #cv2.imshow('test', cv2.cvtColor(roi, cv2.COLOR_RGB2BGR))
-                        #cv2.waitKey(250)
+                        #cv2.waitKey(500)
                         #cv2.destroyAllWindows()
-                        roi = np.transpose(roi, [2,0,1]) / 255
+                        roi = (np.transpose(roi, [2,0,1]).astype(float) / 127.5) -1
                         roi = np.reshape(roi, (1, 3, 224, 224))
                         # Start sync inference
-                        res = exec_net.infer(inputs={input_blob: roi})
+                        res = net_vid_exec.infer(inputs={input_blob_vid: roi})
 
                         # Processing output blob
-                        res = res[out_blob]
+                        res = res[out_blob_vid]
 
                         for i, probs in enumerate(res):
                             probs = np.squeeze(probs) #[np.squeeze(probs) > .5]
                             top_ind = np.argsort(probs)[-number_top:][::-1]
-                            if probs[top_ind] < .7:
+                            if probs[top_ind] < .6:
                                 continue
                             for id in top_ind:
-                                det_label = labels_map[id] if labels_map else "{}".format(id)
+                                det_label = labels_map_vid[id] if labels_map_vid else "{}".format(id)
                                 predicted_ingredients.add(det_label)
                                 print(det_label)
             elif (ret == False):

@@ -19,7 +19,7 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4'])
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -51,7 +51,7 @@ def main():
         num_recipes_to_show = 5
         ignore_pantry = True
         sorting_priority = 1
-        ingredients.update(openvino_infer.infer())
+        ingredients.update(set([item.replace('_', ' ') for item in openvino_infer.infer()]))
 
         dir = 'Uploads'
         for f in os.listdir(dir):
