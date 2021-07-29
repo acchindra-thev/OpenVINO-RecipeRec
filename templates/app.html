@@ -202,28 +202,19 @@
             {% endfor %}
           </ul>
         </div>
-        <div class="w3-half w3-section ex3">
+        <div class="w3-half w3-section ex3" >
           <ul class="w3-ul w3-white w3-hover-shadow">
             <li class="w3-theme-d5 w3-xlarge w3-padding-48">Recipes</li>
             {% if images %}
             {% for i in range(recipes|length): %}
             {% if missed_ingredient_numbers[i] == 0 %}
-            <div class="w3-half w3-section">
-              <li style="font-size:20px" class="w3-padding-16 w3-center"><u>Missing Ingredients</u></li>
-              <li class="w3-padding-16 w3-center">None</li>
-            </div>
-            <div class="w3-half w3-section">
-              <img src={{ images[i] }} width="200" height="234" style="border: 5px solid black;">
-              <li style="font-size:20px" class="w3-padding-16 w3-center"><b>{{ recipes[i].split("(")[0] }}</b></li>
-            </div>
-            {% endif %}
-            {% endfor %}
-            {% for i in range(recipes|length): %}
-            {% if missed_ingredient_numbers[i] != 0 %}
+            <img src={{ images[i] }} width="200" height="234" style="border: 5px solid black;">
+            <li style="font-size:20px" class="w3-padding-16 w3-center"><b>{{ recipes[i].split("(")[0] }}</b></li>
+            {% elif missed_ingredient_numbers[i] != 0 %}
             <div class="w3-half w3-section">
               <li style="font-size:20px" class="w3-padding-16 w3-center"><u>Missing Ingredients</u></li>
               {% for ingredient in missed_ingredient_names.get(recipes[i]): %}
-                <li class="w3-padding-16 w3-center">{{ingredient}}</li>
+              <li class="w3-padding-16 w3-center">{{ingredient}}</li>
               {%endfor%}
             </div>
             <div class="w3-half w3-section">
@@ -336,7 +327,6 @@
       var captionText = document.getElementById("caption");
       captionText.innerHTML = element.alt;
     }
-
 
     // Toggle between showing and hiding the sidebar when clicking the menu icon
     var mySidebar = document.getElementById("mySidebar");

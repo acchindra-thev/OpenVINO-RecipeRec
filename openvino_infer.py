@@ -7,8 +7,9 @@ import tensorflow as tf
 from datetime import datetime
 import cv2
 
+
 def infer():
-    start=datetime.now()
+    start = datetime.now()
 
     log.basicConfig(format="[ %(levelname)s ] %(message)s", level=log.INFO, stream=sys.stdout)
 
@@ -43,10 +44,10 @@ def infer():
     assert len(net.outputs) == 1, "Sample supports only single output topologies"
 
     # Initialize TFLITE interpreter
-    interpreter = tf.lite.Interpreter(model_path = tflite_model)
+    interpreter = tf.lite.Interpreter(model_path=tflite_model)
     interpreter.allocate_tensors()
 
-    #print model metadata
+    # print model metadata
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
 
@@ -61,16 +62,16 @@ def infer():
 
     # Open Video Capture
     cap = cv2.VideoCapture(input_files[0])
-    if cap.isOpened() == False:
+    if not cap.isOpened():
         print("Error opening video file")
     print(input_files[0].split('.')[-1])
     if input_files[0].split('.')[-1] in ['jpeg', 'jpg', 'png']:
         log.info("Starting inference in synchronous mode")
         ret, frame = cap.read()
-        if ret == True:
+        if ret:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame = cv2.resize(frame, (224, 224), interpolation = cv2.INTER_AREA)
-            frame = np.transpose(frame, [2,0,1]) / 255
+            frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
+            frame = np.transpose(frame, [2, 0, 1]) / 255
             frame = np.reshape(frame, (1, 3, 224, 224))
             res = exec_net.infer(inputs={input_blob: frame})
 
@@ -80,7 +81,7 @@ def infer():
 
             log.info("results: ")
             for i, probs in enumerate(res):
-                probs = np.squeeze(probs) #[np.squeeze(probs) > .5]
+                probs = np.squeeze(probs)  # [np.squeeze(probs) > .5]
                 top_ind = np.argsort(probs)[-number_top:][::-1]
 
                 for id in top_ind:
@@ -96,28 +97,28 @@ def infer():
             if (ret == True) and ((fcount % 10) == 0):
                 print(f'frame: {fcount}')
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                cropped = frame[:, 420:1500] # 1080x1080
-                small = cv2.resize(cropped, (192,192), interpolation = cv2.INTER_AREA)
+                cropped = frame[:, 420:1500]  # 1080x1080
+                small = cv2.resize(cropped, (192, 192), interpolation=cv2.INTER_AREA)
                 small = np.resize(small, (1, 192, 192, 3))
                 interpreter.set_tensor(input_details[0]['index'], small)
                 interpreter.invoke()
                 out_dict = {
-                    'detection_boxes' : interpreter.get_tensor(output_details[0]['index']),
-                    'detection_scores' : interpreter.get_tensor(output_details[2]['index'])}
+                    'detection_boxes': interpreter.get_tensor(output_details[0]['index']),
+                    'detection_scores': interpreter.get_tensor(output_details[2]['index'])}
                 out_dict['detection_boxes'] = out_dict['detection_boxes'][0][:number_top]
                 out_dict['detection_scores'] = out_dict['detection_scores'][0][:number_top]
                 for i, score in enumerate(out_dict['detection_scores']):
                     if score > .5:
-                        ymin, xmin, ymax, xmax = (out_dict['detection_boxes'][i]*1080).astype(int)
+                        ymin, xmin, ymax, xmax = (out_dict['detection_boxes'][i] * 1080).astype(int)
                         # print((ymin, xmin, ymax, xmax))
                         roi = cropped[ymin:ymax, xmin:xmax]
                         if roi.shape[0] < 80 or roi.shape[1] < 80:
                             continue
-                        roi = cv2.resize(roi, (224, 224), interpolation = cv2.INTER_AREA)
-                        #cv2.imshow('test', cv2.cvtColor(roi, cv2.COLOR_RGB2BGR))
-                        #cv2.waitKey(250)
-                        #cv2.destroyAllWindows()
-                        roi = np.transpose(roi, [2,0,1]) / 255
+                        roi = cv2.resize(roi, (224, 224), interpolation=cv2.INTER_AREA)
+                        # cv2.imshow('test', cv2.cvtColor(roi, cv2.COLOR_RGB2BGR))
+                        # cv2.waitKey(250)
+                        # cv2.destroyAllWindows()
+                        roi = np.transpose(roi, [2, 0, 1]) / 255
                         roi = np.reshape(roi, (1, 3, 224, 224))
                         # Start sync inference
                         res = exec_net.infer(inputs={input_blob: roi})
@@ -126,7 +127,7 @@ def infer():
                         res = res[out_blob]
 
                         for i, probs in enumerate(res):
-                            probs = np.squeeze(probs) #[np.squeeze(probs) > .5]
+                            probs = np.squeeze(probs)  # [np.squeeze(probs) > .5]
                             top_ind = np.argsort(probs)[-number_top:][::-1]
                             if probs[top_ind] < .7:
                                 continue
@@ -139,7 +140,7 @@ def infer():
 
     print()
     print("Time for program to run is:")
-    print(datetime.now()-start)
+    print(datetime.now() - start)
     print()
     print("Predicted ingredients:")
     print(predicted_ingredients)
